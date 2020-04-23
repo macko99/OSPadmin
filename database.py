@@ -10,7 +10,7 @@ class DataBase:
             self.url = self.url + file.read().split("\n")[0]
         try:
             with open(tmp_file, 'w') as file:
-                file.write(str(requests.get(self.url).json()).replace("'", '"'))
+                file.write(str(requests.get(self.url).json()).replace("'", '"').replace('/', "."))
             with open(tmp_file) as file:
                 self.store = json.load(file)
         except Exception as e:
