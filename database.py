@@ -1,3 +1,5 @@
+import os
+
 import requests
 import json
 
@@ -11,10 +13,16 @@ class DataBase:
         try:
             with open(tmp_file, 'w') as file:
                 file.write(str(requests.get(self.url).json()).replace("'", '"').replace('/', "."))
+        except Exception as e:
+            print(str(e))
+        try:
             with open(tmp_file) as file:
                 self.store = json.load(file)
         except Exception as e:
-            print(str(e))
+            print("Baza danych jest pusta")
+            os.remove("tmp.json")
+            exit(0)
+
 
     def firebase_delete_all(self): #ok
         try:
