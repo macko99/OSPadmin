@@ -3,9 +3,10 @@ import os
 import PDFmaker as pdf
 import database
 
-db = database.DataBase("tmp.json")
+db = database.DataBase("tmp.json", "strażacy.txt")
 pdf_save_path = "Raporty"
 pdf_deleted_path = "Raporty/usuniete"
+pdf_final_path = "Raporty/kompletne"
 
 
 def intoPDF(uuid_num, path):
