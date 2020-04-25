@@ -34,7 +34,12 @@ def intoPDF(uuid_num, path):
            perpetrator, victim, section, details,
            return_date, end_time, home_time, stan_licznika, km_location, modDate]
 
-    pdf.makePDF(tab, path)
+    if path == pdf_deleted_path:
+        pdf.makePDF(tab, path)
+    elif dane['ready'] == "tak":
+        pdf.makePDF(tab, pdf_final_path)
+    else:
+        pdf.makePDF(tab, path)
 
 
 def delete_old_pdf(files, name):
@@ -44,22 +49,32 @@ def delete_old_pdf(files, name):
 
 
 def main():
-    reports = db.get_all_friendly()
+    reports, completed = db.get_all_friendly()
     deleted = db.get_deleted()
     local_files = []
     local_files_modDate = []
+    local_ready_files = []
+    local_ready_files_modDate = []
 
     for file in os.listdir(pdf_save_path):
         if ".pdf" in file:
             local_files_modDate.append(file[:-4])
             local_files.append(file[:-10])
 
+    for file in os.listdir(pdf_final_path):
+        if ".pdf" in file:
+            local_ready_files_modDate.append(file[:-4])
+            local_ready_files.append(file[:-10])
+
     for item in reports:
         if item not in deleted and "__" not in item:
-            if item in local_files_modDate:
+            if item in local_files_modDate or item in local_ready_files_modDate:
                 continue
             elif item[:-6] in local_files:
                 delete_old_pdf(local_files_modDate, item[:-6])
+                intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path)
+            elif item[:-6] in local_ready_files:
+                delete_old_pdf(local_ready_files_modDate, item[:-6])
                 intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path)
             else:
                 intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path)
@@ -67,8 +82,13 @@ def main():
     for item in deleted:
         if item in local_files_modDate:
             os.replace(pdf_save_path + "/" + item + ".pdf", pdf_deleted_path + "/" + item + ".pdf")
+        elif item in local_ready_files_modDate:
+            os.replace(pdf_final_path + "/" + item + ".pdf", pdf_deleted_path + "/" + item + ".pdf")
         elif item[:-6] in local_files:
             delete_old_pdf(local_files_modDate, item[:-6])
+            intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
+        elif item[:-6] in local_ready_files:
+            delete_old_pdf(local_ready_files_modDate, item[:-6])
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
         else:
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
@@ -78,6 +98,8 @@ if __name__ == "__main__":
     if not os.path.exists(pdf_save_path):
         os.makedirs(pdf_save_path)
     if not os.path.exists(pdf_deleted_path):
-            os.makedirs(pdf_deleted_path)
+        os.makedirs(pdf_deleted_path)
+    if not os.path.exists(pdf_final_path):
+        os.makedirs(pdf_final_path)
     main()
     os.remove("tmp.json")
