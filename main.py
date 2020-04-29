@@ -1,5 +1,5 @@
 import os
-
+import sys
 import PDFmaker as pdf
 import database
 import tkinter as tk
@@ -97,14 +97,13 @@ def main():
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
 
     global delete
-    print(delete)
     if delete:
         db.firebase_delete_all()
 
 
 def init_gui():
     def handle_click(event):
-        exit()
+        sys.exit()
 
     def handle_click_yes(event):
         global delete
@@ -119,15 +118,17 @@ def init_gui():
         running.pack()
         try:
             main()
+        except Exception as e:
             os.remove("tmp.json")
             running.destroy()
-        except Exception as e:
             greeting2 = tk.Label(text="ERROR " + str(e), width=60, height=10)
             button3 = tk.Button(text="Zamknij!")
             button3.bind("<Button-1>", handle_click)
             greeting2.pack()
             button3.pack()
         else:
+            os.remove("tmp.json")
+            running.destroy()
             greeting2 = tk.Label(text="GOTOWE", width=60, height=10)
             button3 = tk.Button(text="Zamknij!")
             button3.bind("<Button-1>", handle_click)
@@ -136,7 +137,7 @@ def init_gui():
 
     window = tk.Tk()
     window.wm_title("OSPadmin")
-    # window.iconbitmap("/home/m/PycharmProjects/OSPadmin/logo.ico")
+    # window.iconbitmap("OSPadmin_dane/logo.ico")
 
     greeting = tk.Label(text="Wyczyścić bazę danych po pobraniu raportów?", width=60, height=10)
     button = tk.Button(text="TAK")
