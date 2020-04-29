@@ -2,11 +2,14 @@ import os
 
 import PDFmaker as pdf
 import database
+import tkinter as tk
 
-db = database.DataBase("tmp.json", "strażacy.txt")
+db = database.DataBase("tmp.json", "strażacy.txt", "hasło_mobilne.txt")
 pdf_save_path = "Raporty"
 pdf_deleted_path = "Raporty/usuniete"
 pdf_final_path = "Raporty/kompletne"
+
+delete = False
 
 
 def intoPDF(uuid_num, path):
@@ -93,6 +96,59 @@ def main():
         else:
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
 
+    global delete
+    print(delete)
+    if delete:
+        db.firebase_delete_all()
+
+
+def init_gui():
+    def handle_click(event):
+        exit()
+
+    def handle_click_yes(event):
+        global delete
+        delete = True
+        run(event)
+
+    def run(event):
+        greeting.destroy()
+        button.destroy()
+        button2.destroy()
+        running = tk.Label(text="Porszę czekać...", width=60, height=10)
+        running.pack()
+        try:
+            main()
+            os.remove("tmp.json")
+            running.destroy()
+        except Exception as e:
+            greeting2 = tk.Label(text="ERROR " + str(e), width=60, height=10)
+            button3 = tk.Button(text="Zamknij!")
+            button3.bind("<Button-1>", handle_click)
+            greeting2.pack()
+            button3.pack()
+        else:
+            greeting2 = tk.Label(text="GOTOWE", width=60, height=10)
+            button3 = tk.Button(text="Zamknij!")
+            button3.bind("<Button-1>", handle_click)
+            greeting2.pack()
+            button3.pack()
+
+    window = tk.Tk()
+    window.wm_title("OSPadmin")
+    # window.iconbitmap("/home/m/PycharmProjects/OSPadmin/logo.ico")
+
+    greeting = tk.Label(text="Wyczyścić bazę danych po pobraniu raportów?", width=60, height=10)
+    button = tk.Button(text="TAK")
+    button.bind("<Button-1>", handle_click_yes)
+    button2 = tk.Button(text="NIE")
+    button2.bind("<Button-1>", run)
+
+    greeting.pack()
+    button.pack()
+    button2.pack()
+    window.mainloop()
+
 
 if __name__ == "__main__":
     if not os.path.exists(pdf_save_path):
@@ -101,5 +157,4 @@ if __name__ == "__main__":
         os.makedirs(pdf_deleted_path)
     if not os.path.exists(pdf_final_path):
         os.makedirs(pdf_final_path)
-    main()
-    os.remove("tmp.json")
+    init_gui()
