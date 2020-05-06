@@ -4,7 +4,7 @@ import PDFmaker as pdf
 import database
 import tkinter as tk
 
-db = database.DataBase("tmp.json", "strażacy.txt", "hasło_mobilne.txt")
+db = database.DataBase("tmp.json", "OSPadmin_dane/strażacy.txt", "OSPadmin_dane/hasło_mobilne.txt")
 pdf_save_path = "Raporty"
 pdf_deleted_path = "Raporty/usuniete"
 pdf_final_path = "Raporty/kompletne"
@@ -116,6 +116,7 @@ def init_gui():
         button2.destroy()
         running = tk.Label(text="Porszę czekać...", width=60, height=10)
         running.pack()
+        window.update()
         try:
             main()
         except Exception as e:

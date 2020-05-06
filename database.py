@@ -8,7 +8,7 @@ class DataBase:
     url = 'https://ospapp-53708.firebaseio.com/.json?auth='
 
     def __init__(self, tmp_file, heroes_file, passwd_path):
-        with open("secret", 'r') as file:
+        with open("OSPadmin_dane/secret", 'r') as file:
             self.url = self.url + file.read().split("\n")[0]
         try:
             with open(heroes_file, 'r') as file:
