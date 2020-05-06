@@ -1,10 +1,17 @@
+import os
+import matplotlib.font_manager as fontman
 from fpdf import FPDF
 
 
 # method printing to pdf
 # arguments: list of report values (as returned by db.getReport(), path to reports directory
+def find_font_file(query):
+    matches = list(filter(lambda path: query in os.path.basename(path), fontman.findSystemFonts()))
+    return matches
+
 
 def makePDF(printed_values, pdf_save_path):
+
     report_no = printed_values[0]
 
     # printing parameters
@@ -12,12 +19,24 @@ def makePDF(printed_values, pdf_save_path):
     # currenty set to printing on A4 format (210x297 mm)
     W = 190
     H = 278
-    f_type = "Arial"  # font type
     f_size = 5  # font size
     c_height = 0.02 * H  # cell height
 
     rep = FPDF()
     rep.add_page()
+
+    if find_font_file('segoeui.ttf') != []:
+        rep.add_font('Segoe', '', find_font_file('segoeui.ttf')[0], uni=True)
+        rep.add_font('Segoe', 'B', find_font_file('segoeuib.ttf')[0], uni=True)
+        f_type = "Segoe"  # font type
+    if find_font_file('arial.ttf') != []:
+        rep.add_font('Arial', '', find_font_file('arial.ttf')[0], uni=True)
+        rep.add_font('Arial', 'B', find_font_file('arialbd.ttf')[0], uni=True)
+        f_type = "Arial"  # font type
+    if find_font_file('DejaVuSans.ttf') != []:
+        rep.add_font('DejaVu', '', find_font_file('DejaVuSans.ttf')[0], uni=True)
+        rep.add_font('DejaVu', 'B', find_font_file('DejaVuSans-Bold.ttf')[0], uni=True)
+        f_type = "DejaVu"  # font type
 
     rep.set_font(f_type, 'B', size=5 * f_size)
     rep.cell(0.8 * W, 2.5 * c_height, txt="OPIS ZDARZENIA", align="C", border=1, ln=0)
