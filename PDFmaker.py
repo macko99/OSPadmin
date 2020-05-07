@@ -40,7 +40,7 @@ def makePDF(printed_values, pdf_save_path):
         rep.add_font('FONT', '', find_font_file('Times New Roman.ttf')[0], uni=True)
 
     if find_font_file('arialbd.ttf'):
-        rep.add_font('FONT', 'B', find_font_file('arialdb.ttf')[0], uni=True)
+        rep.add_font('FONT', 'B', find_font_file('arialbd.ttf')[0], uni=True)
     elif find_font_file('timesbd.ttf'):
         rep.add_font('FONT', 'B', find_font_file('timesbd.ttf')[0], uni=True)
 
@@ -105,7 +105,7 @@ def makePDF(printed_values, pdf_save_path):
     len_sub_rest = min(len(heroes) - 5, 5)
     for h_index in range(len_sub_rest):
         rep.set_xy(W * 0.66 + left_margin, y_now + c_h_height * h_index)
-        rep.cell(0.67 * W, c_h_height, txt=" " + heroes[5 + h_index].replace("\n", ", "), align='L')
+        rep.cell(0.33 * W, c_h_height, txt=" " + heroes[5 + h_index].replace("\n", ", "), align='L')
 
     rep.set_xy(W * 0.33 + left_margin, ybefore)
     rep.multi_cell(0.67 * W, 8 * c_height, txt='', align="L", border=1)
@@ -116,7 +116,7 @@ def makePDF(printed_values, pdf_save_path):
     rep.multi_cell(1 * W, 2 * c_height, txt="  SZCZEGOLY ZDARZENIA:", align='L')
     y_now = rep.y
     det = printed_values[12].replace('\n', ' ')
-    det += " " if len(det) is 0 else ""
+    det += "  " if len(det) is 0 else ""
     rows = [det[i:min(i + 90, len(det))] for i in range(0, len(det), 90)]
     for row in rows:
         rep.set_xy(left_margin, y_now + rows.index(row) * c_h_height)
