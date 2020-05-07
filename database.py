@@ -56,7 +56,7 @@ class DataBase:
             if 'deleted' not in item and 'heroes' not in item and 'passwd' not in item:
                 data = self.store[item]
                 result.append(data["innerID"] + "_" + data["location"] + "_" + data["depDate"] + "_" + data['modDate'][11:].replace(":", ""))
-                if data["ready"] == "tak":
+                if data["ready"] == "Tak":
                     ready.append(data["innerID"] + "_" + data["location"] + "_" + data["depDate"] + "_" + data['modDate'][11:].replace(":", ""))
         return result, ready
 
