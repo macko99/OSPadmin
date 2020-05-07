@@ -39,7 +39,7 @@ def intoPDF(uuid_num, path):
 
     if path == pdf_deleted_path:
         pdf.makePDF(tab, path)
-    elif dane['ready'] == "tak":
+    elif dane['ready'] == "Tak":
         pdf.makePDF(tab, pdf_final_path)
     else:
         pdf.makePDF(tab, path)
@@ -70,7 +70,7 @@ def main():
             local_ready_files.append(file[:-10])
 
     for item in reports:
-        if item not in deleted and "___" not in item:
+        if item not in deleted and "__" not in item:
             if item in local_files_modDate or item in local_ready_files_modDate:
                 continue
             elif item[:-6] in local_files:
