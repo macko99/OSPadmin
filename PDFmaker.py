@@ -91,12 +91,39 @@ def makePDF(printed_values, pdf_save_path):
     rep.multi_cell(0.33 * W, 2 * c_height, txt=" SPRAWCA:\n " + printed_values[9], align="L", border=1)
     rep.set_xy(left_margin, ybefore + 4 * c_height)
     rep.multi_cell(0.33 * W, 2 * c_height, txt=" POSZKODOWANY:\n " + printed_values[10], align="L", border=1)
+    y_next = rep.get_y()
     rep.set_xy(W * 0.33 + left_margin, ybefore)
-    rep.multi_cell(0.67 * W, 4 * c_height, txt=" SEKCJA:\n " + printed_values[11], align="L", border=1)
+
+    rep.multi_cell(0.67 * W, 2 * c_height, txt=" SEKCJA:", align='L')
+    y_now = rep.y
+    c_h_height = c_height
+    heroes = printed_values[11].split("\n", 10)
+    len_sub_5 = min(len(heroes), 5)
+    for h_index in range(len_sub_5):
+        rep.set_xy(W * 0.33 + left_margin, y_now + c_h_height * h_index)
+        rep.cell(0.33 * W, c_h_height, txt=" " + heroes[h_index].replace("\n", ", "), align='L')
+    len_sub_rest = min(len(heroes) - 5, 5)
+    for h_index in range(len_sub_rest):
+        rep.set_xy(W * 0.66 + left_margin, y_now + c_h_height * h_index)
+        rep.cell(0.67 * W, c_h_height, txt=" " + heroes[5 + h_index].replace("\n", ", "), align='L')
+
+    rep.set_xy(W * 0.33 + left_margin, ybefore)
+    rep.multi_cell(0.67 * W, 8 * c_height, txt='', align="L", border=1)
+    rep.set_y(y_next)
 
     rep.ln(c_height)
-
-    rep.multi_cell(1 * W, 5 * c_height, txt=" SZCZEGOLY ZDARZENIA:\n " + printed_values[12], align="L", border=1)
+    ybefore = rep.y
+    rep.multi_cell(1 * W, 2 * c_height, txt="  SZCZEGOLY ZDARZENIA:", align='L')
+    y_now = rep.y
+    det = printed_values[12].replace('\n', ' ')
+    det += " " if len(det) is 0 else ""
+    rows = [det[i:min(i + 90, len(det))] for i in range(0, len(det), 90)]
+    for row in rows:
+        rep.set_xy(left_margin, y_now + rows.index(row) * c_h_height)
+        row = row[1:] if row[0] is " " else row
+        rep.cell(1 * W, c_h_height, txt=" " + row + "-", align='L')
+    rep.set_y(ybefore)
+    rep.multi_cell(1 * W, 10 * c_height, border=1)
 
     rep.ln(c_height)
 
