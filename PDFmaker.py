@@ -6,8 +6,8 @@ from fpdf import FPDF
 # method printing to pdf
 # arguments: list of report values (as returned by db.getReport(), path to reports directory
 def find_font_file(query):
-    matches = list(filter(lambda path: query in os.path.basename(path), fontman.findSystemFonts()))
-    return matches
+    result = list(filter(lambda path: query in os.path.basename(path), fontman.findSystemFonts()))
+    return result
 
 
 def makePDF(printed_values, pdf_save_path):
@@ -25,18 +25,38 @@ def makePDF(printed_values, pdf_save_path):
     rep = FPDF()
     rep.add_page()
 
-    if find_font_file('segoeui.ttf') != []:
-        rep.add_font('Segoe', '', find_font_file('segoeui.ttf')[0], uni=True)
-        rep.add_font('Segoe', 'B', find_font_file('segoeuib.ttf')[0], uni=True)
-        f_type = "Segoe"  # font type
     if find_font_file('arial.ttf') != []:
-        rep.add_font('Arial', '', find_font_file('arial.ttf')[0], uni=True)
-        rep.add_font('Arial', 'B', find_font_file('arialbd.ttf')[0], uni=True)
-        f_type = "Arial"  # font type
-    if find_font_file('DejaVuSans.ttf') != []:
-        rep.add_font('DejaVu', '', find_font_file('DejaVuSans.ttf')[0], uni=True)
-        rep.add_font('DejaVu', 'B', find_font_file('DejaVuSans-Bold.ttf')[0], uni=True)
-        f_type = "DejaVu"  # font type
+        rep.add_font('FONT', '', find_font_file('arial.ttf')[0], uni=True)
+    elif find_font_file('times.ttf') != []:
+        rep.add_font('FONT', '', find_font_file('times.ttf')[0], uni=True)
+
+    elif find_font_file('DejaVuSans.ttf') != []:
+        rep.add_font('FONT', '', find_font_file('DejaVuSans.ttf')[0], uni=True)
+    elif find_font_file('Ubuntu-R.ttf') != []:
+        rep.add_font('FONT', '', find_font_file('Ubuntu-R.ttf')[0], uni=True)
+
+    elif find_font_file('Arial.ttf') != []:
+        rep.add_font('FONT', '', find_font_file('Arial.ttf')[0], uni=True)
+    elif find_font_file('Times New Roman.ttf') != []:
+        rep.add_font('FONT', '', find_font_file('Times New Roman.ttf')[0], uni=True)
+
+
+    if find_font_file('arialbd.ttf') != []:
+        rep.add_font('FONT', 'B', find_font_file('arial.ttf')[0], uni=True)
+    elif find_font_file('timesbd.ttf') != []:
+        rep.add_font('FONT', 'B', find_font_file('times.ttf')[0], uni=True)
+
+    elif find_font_file('DejaVuSans-Bold.ttf') != []:
+        rep.add_font('FONT', 'B', find_font_file('DejaVuSans.ttf')[0], uni=True)
+    elif find_font_file('Ubuntu-B.ttf') != []:
+        rep.add_font('FONT', 'B', find_font_file('Ubuntu-R.ttf')[0], uni=True)
+
+    elif find_font_file('Arial Bold.ttf') != []:
+        rep.add_font('FONT', 'B', find_font_file('Arial.ttf')[0], uni=True)
+    elif find_font_file('Times New Roman Bold.ttf') != []:
+        rep.add_font('FONT', 'B', find_font_file('Times New Roman.ttf')[0], uni=True)
+
+    f_type = "FONT"  # font type
 
     rep.set_font(f_type, 'B', size=5 * f_size)
     rep.cell(0.8 * W, 2.5 * c_height, txt="OPIS ZDARZENIA", align="C", border=1, ln=0)
