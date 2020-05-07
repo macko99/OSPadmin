@@ -40,19 +40,19 @@ def makePDF(printed_values, pdf_save_path):
         rep.add_font('FONT', '', find_font_file('Times New Roman.ttf')[0], uni=True)
 
     if find_font_file('arialbd.ttf'):
-        rep.add_font('FONT', 'B', find_font_file('arial.ttf')[0], uni=True)
+        rep.add_font('FONT', 'B', find_font_file('arialdb.ttf')[0], uni=True)
     elif find_font_file('timesbd.ttf'):
-        rep.add_font('FONT', 'B', find_font_file('times.ttf')[0], uni=True)
+        rep.add_font('FONT', 'B', find_font_file('timesbd.ttf')[0], uni=True)
 
     elif find_font_file('DejaVuSans-Bold.ttf'):
-        rep.add_font('FONT', 'B', find_font_file('DejaVuSans.ttf')[0], uni=True)
+        rep.add_font('FONT', 'B', find_font_file('DejaVuSans-Bold.ttf')[0], uni=True)
     elif find_font_file('Ubuntu-B.ttf'):
-        rep.add_font('FONT', 'B', find_font_file('Ubuntu-R.ttf')[0], uni=True)
+        rep.add_font('FONT', 'B', find_font_file('Ubuntu-B.ttf')[0], uni=True)
 
     elif find_font_file('Arial Bold.ttf'):
-        rep.add_font('FONT', 'B', find_font_file('Arial.ttf')[0], uni=True)
+        rep.add_font('FONT', 'B', find_font_file('Arial Bold.ttf')[0], uni=True)
     elif find_font_file('Times New Roman Bold.ttf'):
-        rep.add_font('FONT', 'B', find_font_file('Times New Roman.ttf')[0], uni=True)
+        rep.add_font('FONT', 'B', find_font_file('Times New Roman Bold.ttf')[0], uni=True)
 
     f_type = "FONT"  # font type
 
