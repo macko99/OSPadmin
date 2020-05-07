@@ -11,7 +11,6 @@ def find_font_file(query):
 
 
 def makePDF(printed_values, pdf_save_path):
-
     report_no = printed_values[0]
 
     # printing parameters
@@ -25,35 +24,34 @@ def makePDF(printed_values, pdf_save_path):
     rep = FPDF()
     rep.add_page()
 
-    if find_font_file('arial.ttf') != []:
+    if find_font_file('arial.ttf'):
         rep.add_font('FONT', '', find_font_file('arial.ttf')[0], uni=True)
-    elif find_font_file('times.ttf') != []:
+    elif find_font_file('times.ttf'):
         rep.add_font('FONT', '', find_font_file('times.ttf')[0], uni=True)
 
-    elif find_font_file('DejaVuSans.ttf') != []:
+    elif find_font_file('DejaVuSans.ttf'):
         rep.add_font('FONT', '', find_font_file('DejaVuSans.ttf')[0], uni=True)
-    elif find_font_file('Ubuntu-R.ttf') != []:
+    elif find_font_file('Ubuntu-R.ttf'):
         rep.add_font('FONT', '', find_font_file('Ubuntu-R.ttf')[0], uni=True)
 
-    elif find_font_file('Arial.ttf') != []:
+    elif find_font_file('Arial.ttf'):
         rep.add_font('FONT', '', find_font_file('Arial.ttf')[0], uni=True)
-    elif find_font_file('Times New Roman.ttf') != []:
+    elif find_font_file('Times New Roman.ttf'):
         rep.add_font('FONT', '', find_font_file('Times New Roman.ttf')[0], uni=True)
 
-
-    if find_font_file('arialbd.ttf') != []:
+    if find_font_file('arialbd.ttf'):
         rep.add_font('FONT', 'B', find_font_file('arial.ttf')[0], uni=True)
-    elif find_font_file('timesbd.ttf') != []:
+    elif find_font_file('timesbd.ttf'):
         rep.add_font('FONT', 'B', find_font_file('times.ttf')[0], uni=True)
 
-    elif find_font_file('DejaVuSans-Bold.ttf') != []:
+    elif find_font_file('DejaVuSans-Bold.ttf'):
         rep.add_font('FONT', 'B', find_font_file('DejaVuSans.ttf')[0], uni=True)
-    elif find_font_file('Ubuntu-B.ttf') != []:
+    elif find_font_file('Ubuntu-B.ttf'):
         rep.add_font('FONT', 'B', find_font_file('Ubuntu-R.ttf')[0], uni=True)
 
-    elif find_font_file('Arial Bold.ttf') != []:
+    elif find_font_file('Arial Bold.ttf'):
         rep.add_font('FONT', 'B', find_font_file('Arial.ttf')[0], uni=True)
-    elif find_font_file('Times New Roman Bold.ttf') != []:
+    elif find_font_file('Times New Roman Bold.ttf'):
         rep.add_font('FONT', 'B', find_font_file('Times New Roman.ttf')[0], uni=True)
 
     f_type = "FONT"  # font type
@@ -114,5 +112,6 @@ def makePDF(printed_values, pdf_save_path):
     rep.multi_cell(0.25 * W, 2 * c_height, txt=" KM. DO MIEJSCA ZD: \n " + printed_values[17], align="C", border=1)
 
     modDate = str(printed_values[18])[11:].replace(":", "")
-    path = pdf_save_path + "/" + str(report_no) + "_" + str(printed_values[4]) + "_" + str(printed_values[1]) + "_" + modDate + ".pdf"
+    path = pdf_save_path + "/" + str(report_no) + "_" + str(printed_values[4]) + "_" + str(
+        printed_values[1]) + "_" + modDate + ".pdf"
     rep.output(path)
