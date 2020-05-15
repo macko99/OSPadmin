@@ -45,10 +45,13 @@ def intoPDF(uuid_num, path):
         pdf.makePDF(tab, path)
 
 
-def delete_old_pdf(files, name):
+def delete_old_pdf(files, name, ready):
     for item in files:
         if name in item:
-            os.remove(pdf_save_path + "/" + item + ".pdf")
+            if ready:
+                os.remove(pdf_final_path + "/" + item + ".pdf")
+            else:
+                os.remove(pdf_save_path + "/" + item + ".pdf")
 
 
 def main():
@@ -74,10 +77,10 @@ def main():
             if item in local_files_modDate or item in local_ready_files_modDate:
                 continue
             elif item[:-6] in local_files:
-                delete_old_pdf(local_files_modDate, item[:-6])
+                delete_old_pdf(local_files_modDate, item[:-6], False)
                 intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path)
             elif item[:-6] in local_ready_files:
-                delete_old_pdf(local_ready_files_modDate, item[:-6])
+                delete_old_pdf(local_ready_files_modDate, item[:-6], True)
                 intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path)
             else:
                 intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path)
@@ -88,10 +91,10 @@ def main():
         elif item in local_ready_files_modDate:
             os.replace(pdf_final_path + "/" + item + ".pdf", pdf_deleted_path + "/" + item + ".pdf")
         elif item[:-6] in local_files:
-            delete_old_pdf(local_files_modDate, item[:-6])
+            delete_old_pdf(local_files_modDate, item[:-6], False)
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
         elif item[:-6] in local_ready_files:
-            delete_old_pdf(local_ready_files_modDate, item[:-6])
+            delete_old_pdf(local_ready_files_modDate, item[:-6], True)
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
         else:
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
