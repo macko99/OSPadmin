@@ -1,0 +1,6 @@
+OSP1
+hello1
+
+#w bazie jest jeszcze:
+# OSP2
+# hello2
