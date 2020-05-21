@@ -136,7 +136,7 @@ def init_gui():
     greeting = tk.Label(text="Program stworzy pliki PDF dla raportów", width=60, height=10)
     button = tk.Button(text="START")
     button.bind("<Button-1>", run)
-    button2 = tk.Button(text="EXIT")
+    button2 = tk.Button(text="Zamknij")
     button2.bind("<Button-1>", handle_click)
 
     greeting.pack()
