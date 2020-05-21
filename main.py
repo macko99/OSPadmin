@@ -4,15 +4,12 @@ import PDFmaker as pdf
 import database
 import tkinter as tk
 
-db = database.DataBase("tmp.json", "OSPadmin_dane/strażacy.txt", "OSPadmin_dane/hasło_mobilne.txt")
 pdf_save_path = "Raporty"
 pdf_deleted_path = "Raporty/usuniete"
 pdf_final_path = "Raporty/kompletne"
 
-delete = False
 
-
-def intoPDF(uuid_num, path):
+def intoPDF(uuid_num, path, db):
     dane = db.get_report(uuid_num)
     modDate = dane['modDate']
     id_number = dane['innerID']
@@ -33,9 +30,10 @@ def intoPDF(uuid_num, path):
     home_time = dane['homeTime']
     stan_licznika = dane['stanLicznika']
     km_location = dane['KM']
+    truck_number = dane['truck']
     tab = [id_number, dep_date, dep_time, spot_time, location, type_of_action, section_com, action_com, driver,
            perpetrator, victim, section, details,
-           return_date, end_time, home_time, stan_licznika, km_location, modDate]
+           return_date, end_time, home_time, stan_licznika, km_location, modDate, truck_number]
 
     if path == pdf_deleted_path:
         pdf.makePDF(tab, path)
@@ -54,7 +52,7 @@ def delete_old_pdf(files, name, ready):
                 os.remove(pdf_save_path + "/" + item + ".pdf")
 
 
-def main():
+def main(db):
     reports, completed = db.get_all_friendly()
     deleted = db.get_deleted()
     local_files = []
@@ -78,12 +76,12 @@ def main():
                 continue
             elif item[:-6] in local_files:
                 delete_old_pdf(local_files_modDate, item[:-6], False)
-                intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path)
+                intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path, db)
             elif item[:-6] in local_ready_files:
                 delete_old_pdf(local_ready_files_modDate, item[:-6], True)
-                intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path)
+                intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path, db)
             else:
-                intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path)
+                intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path, db)
 
     for item in deleted:
         if item in local_files_modDate:
@@ -92,26 +90,17 @@ def main():
             os.replace(pdf_final_path + "/" + item + ".pdf", pdf_deleted_path + "/" + item + ".pdf")
         elif item[:-6] in local_files:
             delete_old_pdf(local_files_modDate, item[:-6], False)
-            intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
+            intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path, db)
         elif item[:-6] in local_ready_files:
             delete_old_pdf(local_ready_files_modDate, item[:-6], True)
-            intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
+            intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path, db)
         else:
-            intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path)
-
-    global delete
-    if delete:
-        db.firebase_delete_all()
+            intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path, db)
 
 
 def init_gui():
     def handle_click(event):
         sys.exit()
-
-    def handle_click_yes(event):
-        global delete
-        delete = True
-        run(event)
 
     def run(event):
         greeting.destroy()
@@ -121,7 +110,9 @@ def init_gui():
         running.pack()
         window.update()
         try:
-            main()
+            db = database.DataBase("tmp.json", "OSPadmin_dane/strażacy.txt", "OSPadmin_dane/hasło_mobilne.txt",
+                                   "OSPadmin_dane/zdarzenia.txt")
+            main(db)
         except Exception as e:
             os.remove("tmp.json")
             running.destroy()
@@ -140,14 +131,13 @@ def init_gui():
             button3.pack()
 
     window = tk.Tk()
-    window.wm_title("OSPadmin")
-    # window.iconbitmap("OSPadmin_dane/logo.ico")
+    window.wm_title("OSPadmin - generator PDF")
 
-    greeting = tk.Label(text="Wyczyścić bazę danych po pobraniu raportów?", width=60, height=10)
-    button = tk.Button(text="TAK")
-    button.bind("<Button-1>", handle_click_yes)
-    button2 = tk.Button(text="NIE")
-    button2.bind("<Button-1>", run)
+    greeting = tk.Label(text="Program stworzy pliki PDF dla raportów", width=60, height=10)
+    button = tk.Button(text="START")
+    button.bind("<Button-1>", run)
+    button2 = tk.Button(text="EXIT")
+    button2.bind("<Button-1>", handle_click)
 
     greeting.pack()
     button.pack()

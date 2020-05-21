@@ -11,7 +11,7 @@ def find_font_file(query):
     return matches
 
 
-def makePDF(printed_values, pdf_save_path):
+def makePDF(printed_values, pdf_save_path): #!!!!!!!!!!!!!!!!!!!!!!!!!!! printed_values[19] -> truck_number (zastęp)
 
     report_no = printed_values[0]
 
