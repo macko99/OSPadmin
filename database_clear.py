@@ -44,7 +44,7 @@ class DataBase:
     def firebase_delete_all(self):
         try:
             for key in self.store:
-                if 'heroes' not in key and 'passwd' not in key:
+                if 'heroes' not in key and 'passwd' not in key and 'types' not in key:
                     requests.delete(url=self.base_url + "/" + key + self.secret)
         except Exception as e:
             print("nie udało się usunąć raportów z bazy " + str(e))
