@@ -36,7 +36,7 @@ class DataBase:
                 action = []
                 section = []
                 all = []
-                heroes = file.read().__add__("\ninny, w sczegółach@K,A,S").split("\n")
+                heroes = file.read().__add__("\ninny, w sczegółach@K,A,S#").split("\n")
                 for hero in heroes:
                     if '@' in hero:
                         types = hero.split("@")[1]
@@ -46,7 +46,8 @@ class DataBase:
                             driver.append(hero.split("@")[0])
                         if 'S' in types:
                             section.append(hero.split("@")[0])
-                        all.append(hero.split("@")[0])
+                        if '#' not in types:
+                            all.append(hero.split("@")[0])
                     else:
                         all.append(hero)
                 string = "{'heroes': {'action': " + str(action) + ", 'driver': " + str(driver) + ", 'section':" + str(section) + ", 'all':" + str(all) + "}}"
