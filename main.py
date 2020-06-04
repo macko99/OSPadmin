@@ -106,6 +106,7 @@ def init_gui():
         greeting.destroy()
         button.destroy()
         button2.destroy()
+        rights.destroy()
         running = tk.Label(text="Porszę czekać...", width=60, height=10)
         running.pack()
         window.update()
@@ -134,6 +135,7 @@ def init_gui():
     window.wm_title("OSPadmin - generator PDF")
 
     greeting = tk.Label(text="Program stworzy pliki PDF dla raportów", width=60, height=10)
+    rights = tk.Label(text="Maciej Kozub, Tomasz Zachwieja @ AGH 2020", width=60, height=2, fg="gray")
     button = tk.Button(text="START")
     button.bind("<Button-1>", run)
     button2 = tk.Button(text="Zamknij")
@@ -142,6 +144,7 @@ def init_gui():
     greeting.pack()
     button.pack()
     button2.pack()
+    rights.pack()
     window.mainloop()
 
 

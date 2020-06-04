@@ -9,6 +9,7 @@ def init_gui():
         sys.exit()
 
     def run(event):
+        rights.destroy()
         greeting.destroy()
         button.destroy()
         button2.destroy()
@@ -39,6 +40,7 @@ def init_gui():
     window.wm_title("OSPadmin - czyszczenie")
 
     greeting = tk.Label(text="Wyczyścić bazę danych?", width=60, height=10)
+    rights = tk.Label(text="Maciej Kozub, Tomasz Zachwieja @ AGH 2020", width=60, height=2, fg="gray")
     button = tk.Button(text="TAK")
     button.bind("<Button-1>", run)
     button2 = tk.Button(text="NIE")
@@ -47,6 +49,7 @@ def init_gui():
     greeting.pack()
     button.pack()
     button2.pack()
+    rights.pack()
     window.mainloop()
 
 
