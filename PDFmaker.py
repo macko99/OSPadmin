@@ -11,7 +11,7 @@ def find_font_file(query):
     return matches
 
 
-def makePDF(printed_values, pdf_save_path): #!!!!!!!!!!!!!!!!!!!!!!!!!!! printed_values[19] -> truck_number (zastęp)
+def makePDF(printed_values, pdf_save_path):
 
     report_no = printed_values[0]
 
@@ -100,15 +100,15 @@ def makePDF(printed_values, pdf_save_path): #!!!!!!!!!!!!!!!!!!!!!!!!!!! printed
     rep.multi_cell(0.67 * W, 2 * c_height, txt=" SEKCJA:", align='L')
     y_now = rep.y
     c_h_height = c_height
-    heroes = printed_values[11].split("\n", 8)
-    len_sub_3 = min(len(heroes), 3)
+    heroes = printed_values[11].split(", ")
+    len_sub_3 = min(len(heroes), 5)
     for h_index in range(len_sub_3):
         rep.set_xy(W * 0.33 + left_margin, y_now + c_h_height * h_index)
         rep.cell(0.33 * W, c_h_height, txt=" " + heroes[h_index].replace("\n", ", "), align='L')
-    len_sub_rest = min(len(heroes) - 3, 3)
+    len_sub_rest = min(len(heroes) - 5, 5)
     for h_index in range(len_sub_rest):
         rep.set_xy(W * 0.66 + left_margin, y_now + c_h_height * h_index)
-        rep.cell(0.33 * W, c_h_height, txt=" " + heroes[3 + h_index].replace("\n", ", "), align='L')
+        rep.cell(0.33 * W, c_h_height, txt=" " + heroes[5 + h_index].replace("\n", ", "), align='L')
 
     rep.set_xy(W * 0.33 + left_margin, ybefore)
     rep.multi_cell(0.67 * W, 8 * c_height, txt='', align="L", border=1)

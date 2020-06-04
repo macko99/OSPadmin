@@ -22,11 +22,13 @@ class DataBase:
         try:
             user_passwd = str(requests.get(self.base_url + "passwd/" + user + self.secret).json())
         except Exception as e:
-            raise Exception("no connection " + str(e))
+            raise Exception("brak połączenia z bazą " + str(e))
         if user_passwd == "None":
-            raise Exception("bad user " + user)
+            raise Exception("błędny login: " + user)
+        elif user_passwd == "UPDATE":
+            raise Exception("Musisz zaktualizować aplikację!")
         if password != user_passwd:
-            raise Exception("wrong password for user " + user)
+            raise Exception("blędne hasło dla: " + user)
         self.base_url = self.base_url + user
         self.url = self.base_url + self.secret
 

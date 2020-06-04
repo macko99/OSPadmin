@@ -1,5 +1,7 @@
 import os
 import sys
+from pathlib import Path
+
 import PDFmaker as pdf
 import database
 import tkinter as tk
@@ -115,13 +117,14 @@ def init_gui():
                                    "OSPadmin_dane/zdarzenia.txt")
             main(db)
         except Exception as e:
-            os.remove("tmp.json")
             running.destroy()
             greeting2 = tk.Label(text="ERROR " + str(e), width=60, height=10)
             button3 = tk.Button(text="Zamknij!")
             button3.bind("<Button-1>", handle_click)
             greeting2.pack()
             button3.pack()
+            if Path("tmp.json").is_file():
+                os.remove("tmp.json")
         else:
             os.remove("tmp.json")
             running.destroy()

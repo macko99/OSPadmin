@@ -1,5 +1,7 @@
 import sys
 import os
+from pathlib import Path
+
 import database_clear
 import tkinter as tk
 
@@ -20,7 +22,8 @@ def init_gui():
             db = database_clear.DataBase("tmp.json")
             db.firebase_delete_all()
         except Exception as e:
-            os.remove("tmp.json")
+            if Path("tmp.json").is_file():
+                os.remove("tmp.json")
             running.destroy()
             greeting2 = tk.Label(text="ERROR " + str(e), width=60, height=10)
             button3 = tk.Button(text="Zamknij!")
