@@ -1,5 +1,5 @@
-OSP1
-hello1
+OSP2
+hello2
 
 #w bazie jest jeszcze:
 # OSP2

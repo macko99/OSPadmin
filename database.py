@@ -13,7 +13,6 @@ class DataBase:
         self.passwd_path = passwd_path
         self.truck_no_file = truck_no_file
         self.version = version
-        print(version)
         try:
             with open("OSPadmin_dane/logowanie.txt", 'r') as file:
                 arr = file.read().split("\n")
