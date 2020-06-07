@@ -7,7 +7,13 @@ class DataBase:
     url = ''
     secret = ''
 
-    def __init__(self, tmp_file, heroes_file, passwd_path, action_type_file):
+    def __init__(self, tmp_file, heroes_file, passwd_path, truck_no_file, version):
+        self.tmp_file = tmp_file
+        self.heroes_file = heroes_file
+        self.passwd_path = passwd_path
+        self.truck_no_file = truck_no_file
+        self.version = version
+        print(version)
         try:
             with open("OSPadmin_dane/logowanie.txt", 'r') as file:
                 arr = file.read().split("\n")
@@ -29,11 +35,37 @@ class DataBase:
             raise Exception("Musisz zaktualizować aplikację!")
         if password != user_passwd:
             raise Exception("blędne hasło dla: " + user)
+        to_database = json.loads('{"' + user + '": "' + self.version + '"}')
+        requests.patch(url=self.base_url + "desktopVersion/" + self.secret, json=to_database)
         self.base_url = self.base_url + user
         self.url = self.base_url + self.secret
 
+        self.upload_data()
+        self.download_data()
+
+    def firebase_delete_all(self):
         try:
-            with open(heroes_file, 'r') as file:
+            for key in self.store:
+                if 'heroes' not in key and 'passwd' not in key and 'trucks' not in key:
+                    requests.delete(url=self.base_url + "/" + key + self.secret)
+        except Exception as e:
+            print("nie udało się usunąć raportów z bazy " + str(e))
+
+    def download_data(self):
+        try:
+            with open(self.tmp_file, 'w') as file:
+                file.write(str(requests.get(self.url).json()).replace("'", '"'))
+        except Exception as e:
+            raise Exception("błąd pobierania danych z bazy " + str(e))
+        try:
+            with open(self.tmp_file) as file:
+                self.store = json.load(file)
+        except Exception as e:
+            raise Exception("Baza danych jest pusta " + str(e))
+
+    def upload_data(self):
+        try:
+            with open(self.heroes_file, 'r') as file:
                 driver = []
                 action = []
                 section = []
@@ -58,29 +90,19 @@ class DataBase:
         except Exception as e:
             print("brak pliku strażacy.txt lub błąd połączenia z bazą " + str(e))
         try:
-            with open(passwd_path, 'r') as file:
+            with open(self.passwd_path, 'r') as file:
                 string = "{'passwd' : '" + file.readline() + "'}"
                 to_database = json.loads(string.replace("'", '"'))
                 requests.patch(url=self.url, json=to_database)
         except Exception as e:
             print("brak pliku hasło_mobile.txt lub błąd połączenia z bazą " + str(e))
         try:
-            with open(action_type_file, 'r') as file:
-                string = "{'types': " + str(file.read().__add__("\ninny, w sczegółach").split("\n")) + "}"
+            with open(self.truck_no_file, 'r') as file:
+                string = "{'trucks': " + str(file.read().__add__("\ninny, w sczegółach").split("\n")) + "}"
                 to_database = json.loads(string.replace("'", '"'))
                 requests.patch(url=self.url, json=to_database)
         except Exception as e:
-            print("brak pliku zdarzenia.txt lub błąd połączenia z bazą " + str(e))
-        try:
-            with open(tmp_file, 'w') as file:
-                file.write(str(requests.get(self.url).json()).replace("'", '"').replace('/', "."))
-        except Exception as e:
-            raise Exception("błąd pobierania danych z bazy " + str(e))
-        try:
-            with open(tmp_file) as file:
-                self.store = json.load(file)
-        except Exception as e:
-            raise Exception("Baza danych jest pusta " + str(e))
+            print("brak pliku zastępy.txt lub błąd połączenia z bazą " + str(e))
 
     def get_report(self, uuid_num):
         return self.store[uuid_num]
@@ -89,7 +111,7 @@ class DataBase:
         result = []
         ready = []
         for item in self.store:
-            if 'deleted' not in item and 'heroes' not in item and 'passwd' not in item and 'types' not in item:
+            if 'deleted' not in item and 'heroes' not in item and 'passwd' not in item and 'trucks' not in item:
                 data = self.store[item]
                 result.append(data["innerID"] + "_" + data["location"] + "_" + data["depDate"] + "_" + data['modDate'][11:].replace(":", ""))
                 if data["ready"] == "Tak":
@@ -99,13 +121,13 @@ class DataBase:
     def get_deleted(self):
         result = []
         for item in self.store:
-            if 'deleted' in item and 'heroes' not in item and 'passwd' not in item and 'types' not in item:
+            if 'deleted' in item and 'heroes' not in item and 'passwd' not in item and 'trucks' not in item:
                 data = self.store[item[8:]]
                 result.append(data["innerID"] + "_" + data["location"] + "_" + data["depDate"] + "_" + data['modDate'][11:].replace(":",""))
         return result
 
     def find_report(self, id_number):
         for item in self.store:
-            if 'deleted' not in item and 'heroes' not in item and 'passwd' not in item and 'types' not in item:
+            if 'deleted' not in item and 'heroes' not in item and 'passwd' not in item and 'trucks' not in item:
                 if self.store[item]["innerID"] == id_number:
                     return item

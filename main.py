@@ -10,6 +10,8 @@ pdf_save_path = "Raporty"
 pdf_deleted_path = "Raporty/usuniete"
 pdf_final_path = "Raporty/kompletne"
 
+version = "1.0"
+
 
 def intoPDF(uuid_num, path, db):
     dane = db.get_report(uuid_num)
@@ -54,7 +56,7 @@ def delete_old_pdf(files, name, ready):
                 os.remove(pdf_save_path + "/" + item + ".pdf")
 
 
-def main(db):
+def generate_pdf(db):
     reports, completed = db.get_all_friendly()
     deleted = db.get_deleted()
     local_files = []
@@ -101,53 +103,101 @@ def main(db):
 
 
 def init_gui():
+    def popup_window(msg):
+        popup = tk.Tk()
+        popup.geometry("+350+250")
+        popup.wm_title("Uwaga!")
+        label = tk.Label(popup, text="Czy na pewno wyczyścić dane?", width=60, height=3)
+        label.pack()
+        spacing2 = tk.Label(popup, text="", width=60, height=0)
+        spacing3 = tk.Label(popup, text="", width=60, height=0)
+        B1 = tk.Button(popup, text="Tak", command=lambda: [popup.destroy(), run(msg)])
+        B1.pack()
+        spacing2.pack()
+        B2 = tk.Button(popup, text="Nie", command=popup.destroy)
+        B2.pack()
+        spacing3.pack()
+        popup.mainloop()
+
     def handle_click(event):
         sys.exit()
 
     def run(event):
         greeting.destroy()
-        button.destroy()
+        opt1.destroy()
+        button1.destroy()
+        opt2.destroy()
         button2.destroy()
+        opt3.destroy()
+        button3.destroy()
+        button4.destroy()
         rights.destroy()
+        spacing3.destroy()
+        ver.destroy()
+        spacing.destroy()
         running = tk.Label(text="Porszę czekać...", width=60, height=10)
         running.pack()
         window.update()
         try:
             db = database.DataBase("tmp.json", "OSPadmin_dane/strażacy.txt", "OSPadmin_dane/hasło_mobilne.txt",
-                                   "OSPadmin_dane/zdarzenia.txt")
-            main(db)
+                                   "OSPadmin_dane/zastępy.txt", version)
+            db.upload_data()
+            if event == 2:
+                db.download_data()
+                generate_pdf(db)
+            if event == 3:
+                db.download_data()
+                db.firebase_delete_all()
         except Exception as e:
             running.destroy()
             greeting2 = tk.Label(text="ERROR " + str(e), width=60, height=10)
-            button3 = tk.Button(text="Zamknij!")
-            button3.bind("<Button-1>", handle_click)
+            button5 = tk.Button(text="Zamknij!")
+            button5.bind("<Button-1>", handle_click)
             greeting2.pack()
-            button3.pack()
+            button5.pack()
             if Path("tmp.json").is_file():
                 os.remove("tmp.json")
         else:
             os.remove("tmp.json")
             running.destroy()
             greeting2 = tk.Label(text="GOTOWE", width=60, height=10)
-            button3 = tk.Button(text="Zamknij!")
-            button3.bind("<Button-1>", handle_click)
+            button5 = tk.Button(text="Zamknij!")
+            button5.bind("<Button-1>", handle_click)
             greeting2.pack()
-            button3.pack()
+            button5.pack()
 
     window = tk.Tk()
+    window.geometry("+300+200")
     window.wm_title("OSPadmin - generator PDF")
 
-    greeting = tk.Label(text="Program stworzy pliki PDF dla raportów", width=60, height=10)
-    rights = tk.Label(text="Maciej Kozub, Tomasz Zachwieja @ AGH 2020", width=60, height=2, fg="gray")
-    button = tk.Button(text="START")
-    button.bind("<Button-1>", run)
-    button2 = tk.Button(text="Zamknij")
-    button2.bind("<Button-1>", handle_click)
+    greeting = tk.Label(text="Witamy! Program posiada kilka funkcji:", width=60, font=('bold'), height=3)
+    opt1 = tk.Label(text="Aktualizuj dane w bazie danych (listy strażaków itp.)", width=60, height=3)
+    opt2 = tk.Label(text="Generuj pliki PDF raportów w bazie danych", width=60, height=3)
+    opt3 = tk.Label(text="Wyczyść raporty z bazy danych", width=60, height=3)
+    rights = tk.Label(text="Maciej Kozub, Tomasz Zachwieja", width=60, height=0, fg="gray")
+    ver = tk.Label(text="AGH 2020, Version: " + version, width=60, height=0, fg="gray")
+    spacing = tk.Label(text="", width=60, height=2)
+    spacing3 = tk.Label(text="", width=60, height=2)
+
+    button1 = tk.Button(text="Wyślij!", command=lambda: run(1))
+    button2 = tk.Button(text="Generuj!", command=lambda: run(2))
+    button3 = tk.Button(text="Czyść!", command=lambda: popup_window(3))
+    button4 = tk.Button(text="Zamknij")
+
+    button4.bind("<Button-1>", handle_click)
 
     greeting.pack()
-    button.pack()
+    opt2.pack()
     button2.pack()
+    opt1.pack()
+    button1.pack()
+    opt3.pack()
+    button3.pack()
+    spacing.pack()
+    button4.pack()
+    spacing3.pack()
     rights.pack()
+    ver.pack()
     window.mainloop()
 
 
