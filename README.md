@@ -16,15 +16,5 @@ Project authors:
 
 We provide all necessary files including executable **.exe** file with proper database access credentials for selected fire departments.
 
-## Usage
-
-```python
-import foobar
-
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
-```
-
 ---
 <img src="https://raw.githubusercontent.com/macko99/OSPadmin/master/logo.ico" height="100">
