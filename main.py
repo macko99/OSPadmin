@@ -1,7 +1,6 @@
 import os
 import sys
 from pathlib import Path
-
 import PDFmaker as pdf
 import database
 import tkinter as tk
@@ -109,8 +108,8 @@ def init_gui():
         popup.wm_title("Uwaga!")
         label = tk.Label(popup, text="Czy na pewno wyczyścić dane?", width=60, height=3)
         label.pack()
-        spacing2 = tk.Label(popup, text="", width=60, height=0)
         spacing3 = tk.Label(popup, text="", width=60, height=0)
+        # spacing4 = tk.Label(popup, text="", width=60, height=0)
         B1 = tk.Button(popup, text="Tak", command=lambda: [popup.destroy(), run(msg)])
         B1.pack()
         spacing2.pack()
@@ -132,20 +131,19 @@ def init_gui():
         button3.destroy()
         button4.destroy()
         rights.destroy()
-        spacing3.destroy()
-        ver.destroy()
         spacing.destroy()
+        ver.destroy()
+        spacing2.destroy()
         running = tk.Label(text="Porszę czekać...", width=60, height=10)
         running.pack()
         window.update()
         try:
             db = database.DataBase("tmp.json", "OSPadmin_dane/strażacy.txt", "OSPadmin_dane/hasło_mobilne.txt",
                                    "OSPadmin_dane/zastępy.txt", version)
-            db.upload_data()
             if event == 2:
                 db.download_data()
                 generate_pdf(db)
-            if event == 3:
+            elif event == 3:
                 db.download_data()
                 db.firebase_delete_all()
         except Exception as e:
@@ -158,13 +156,14 @@ def init_gui():
             if Path("tmp.json").is_file():
                 os.remove("tmp.json")
         else:
-            os.remove("tmp.json")
+            if Path("tmp.json").is_file():
+                os.remove("tmp.json")
             running.destroy()
-            greeting2 = tk.Label(text="GOTOWE", width=60, height=10)
-            button5 = tk.Button(text="Zamknij!")
-            button5.bind("<Button-1>", handle_click)
-            greeting2.pack()
-            button5.pack()
+            greeting3 = tk.Label(text="GOTOWE", width=60, height=10)
+            button6 = tk.Button(text="Zamknij!")
+            button6.bind("<Button-1>", handle_click)
+            greeting3.pack()
+            button6.pack()
 
     window = tk.Tk()
     window.geometry("+300+200")
@@ -177,7 +176,7 @@ def init_gui():
     rights = tk.Label(text="Maciej Kozub, Tomasz Zachwieja", width=60, height=0, fg="gray")
     ver = tk.Label(text="AGH 2020, Version: " + version, width=60, height=0, fg="gray")
     spacing = tk.Label(text="", width=60, height=2)
-    spacing3 = tk.Label(text="", width=60, height=2)
+    spacing2 = tk.Label(text="", width=60, height=2)
 
     button1 = tk.Button(text="Wyślij!", command=lambda: run(1))
     button2 = tk.Button(text="Generuj!", command=lambda: run(2))
@@ -195,7 +194,7 @@ def init_gui():
     button3.pack()
     spacing.pack()
     button4.pack()
-    spacing3.pack()
+    spacing2.pack()
     rights.pack()
     ver.pack()
     window.mainloop()

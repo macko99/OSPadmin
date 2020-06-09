@@ -40,7 +40,6 @@ class DataBase:
         self.url = self.base_url + self.secret
 
         self.upload_data()
-        self.download_data()
 
     def firebase_delete_all(self):
         try:
