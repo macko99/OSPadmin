@@ -13,21 +13,22 @@ class DataBase:
         self.passwd_path = passwd_path
         self.truck_no_file = truck_no_file
         self.version = version
+        self.store = ''
         try:
             with open("OSPadmin_dane/logowanie.txt", 'r') as file:
                 arr = file.read().split("\n")
                 user = arr[0]
                 password = arr[1]
-        except Exception as e:
-            raise Exception("brak pliku logowanie.txt " + str(e))
+        except Exception as login_error:
+            raise Exception("brak pliku logowanie.txt " + str(login_error))
 
         global user_passwd
         with open("OSPadmin_dane/secret", 'r') as file:
             self.secret = file.read().split("\n")[0]
         try:
             user_passwd = str(requests.get(self.base_url + "passwd/" + user + self.secret).json())
-        except Exception as e:
-            raise Exception("brak połączenia z bazą " + str(e))
+        except Exception as auth_error:
+            raise Exception("brak połączenia z bazą " + str(auth_error))
         if user_passwd == "None":
             raise Exception("błędny login: " + user)
         elif user_passwd == "UPDATE":
@@ -46,20 +47,20 @@ class DataBase:
             for key in self.store:
                 if 'heroes' not in key and 'passwd' not in key and 'trucks' not in key:
                     requests.delete(url=self.base_url + "/" + key + self.secret)
-        except Exception as e:
-            print("nie udało się usunąć raportów z bazy " + str(e))
+        except Exception as delete_error:
+            print("nie udało się usunąć raportów z bazy " + str(delete_error))
 
     def download_data(self):
         try:
             with open(self.tmp_file, 'w') as file:
                 file.write(str(requests.get(self.url).json()).replace("'", '"'))
-        except Exception as e:
-            raise Exception("błąd pobierania danych z bazy " + str(e))
+        except Exception as connection_error:
+            raise Exception("błąd pobierania danych z bazy " + str(connection_error))
         try:
             with open(self.tmp_file) as file:
                 self.store = json.load(file)
-        except Exception as e:
-            raise Exception("Baza danych jest pusta " + str(e))
+        except Exception as local_store_error:
+            raise Exception("Baza danych jest pusta " + str(local_store_error))
 
     def upload_data(self):
         try:
@@ -67,7 +68,7 @@ class DataBase:
                 driver = []
                 action = []
                 section = []
-                all = []
+                all_ff = []
                 heroes = file.read().__add__("\ninny, w sczegółach@K,A,S#").split("\n")
                 for hero in heroes:
                     if '@' in hero:
@@ -79,28 +80,28 @@ class DataBase:
                         if 'S' in types:
                             section.append(hero.split("@")[0])
                         if '#' not in types:
-                            all.append(hero.split("@")[0])
+                            all_ff.append(hero.split("@")[0])
                     else:
-                        all.append(hero)
-                string = "{'heroes': {'action': " + str(action) + ", 'driver': " + str(driver) + ", 'section':" + str(section) + ", 'all':" + str(all) + "}}"
+                        all_ff.append(hero)
+                string = "{'heroes': {'action': " + str(action) + ", 'driver': " + str(driver) + ", 'section':" + str(section) + ", 'all':" + str(all_ff) + "}}"
                 to_database = json.loads(string.replace("'", '"'))
                 requests.patch(url=self.url, json=to_database)
-        except Exception as e:
-            print("brak pliku strażacy.txt lub błąd połączenia z bazą " + str(e))
+        except Exception as upload_error:
+            print("brak pliku strażacy.txt lub błąd połączenia z bazą " + str(upload_error))
         try:
             with open(self.passwd_path, 'r') as file:
                 string = "{'passwd' : '" + file.readline() + "'}"
                 to_database = json.loads(string.replace("'", '"'))
                 requests.patch(url=self.url, json=to_database)
-        except Exception as e:
-            print("brak pliku hasło_mobile.txt lub błąd połączenia z bazą " + str(e))
+        except Exception as mobile_password_error:
+            print("brak pliku hasło_mobile.txt lub błąd połączenia z bazą " + str(mobile_password_error))
         try:
             with open(self.truck_no_file, 'r') as file:
                 string = "{'trucks': " + str(file.read().__add__("\ninny, w sczegółach").split("\n")) + "}"
                 to_database = json.loads(string.replace("'", '"'))
                 requests.patch(url=self.url, json=to_database)
-        except Exception as e:
-            print("brak pliku zastępy.txt lub błąd połączenia z bazą " + str(e))
+        except Exception as trucks_error:
+            print("brak pliku zastępy.txt lub błąd połączenia z bazą " + str(trucks_error))
 
     def get_report(self, uuid_num):
         return self.store[uuid_num]

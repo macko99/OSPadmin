@@ -1,7 +1,7 @@
 import os
 import sys
 from pathlib import Path
-import PDFmaker as pdf
+import PDFmaker as Pdf
 import database
 import tkinter as tk
 
@@ -14,7 +14,7 @@ version = "1.0"
 
 def intoPDF(uuid_num, path, db):
     dane = db.get_report(uuid_num)
-    modDate = dane['modDate']
+    mod_date = dane['modDate']
     id_number = dane['innerID']
     dep_date = dane['depDate']
     dep_time = dane['depTime']
@@ -31,19 +31,19 @@ def intoPDF(uuid_num, path, db):
     return_date = dane['returnDate']
     end_time = dane['endTime']
     home_time = dane['homeTime']
-    stan_licznika = dane['stanLicznika']
+    meter_reading = dane['stanLicznika']
     km_location = dane['KM']
     truck_number = dane['truck']
     tab = [id_number, dep_date, dep_time, spot_time, location, type_of_action, section_com, action_com, driver,
            perpetrator, victim, section, details,
-           return_date, end_time, home_time, stan_licznika, km_location, modDate, truck_number]
+           return_date, end_time, home_time, meter_reading, km_location, mod_date, truck_number]
 
     if path == pdf_deleted_path:
-        pdf.makePDF(tab, path)
+        Pdf.make_pdf(tab, path)
     elif dane['ready'] == "Tak":
-        pdf.makePDF(tab, pdf_final_path)
+        Pdf.make_pdf(tab, pdf_final_path)
     else:
-        pdf.makePDF(tab, path)
+        Pdf.make_pdf(tab, path)
 
 
 def delete_old_pdf(files, name, ready):
@@ -59,43 +59,43 @@ def generate_pdf(db):
     reports, completed = db.get_all_friendly()
     deleted = db.get_deleted()
     local_files = []
-    local_files_modDate = []
+    local_files_mod_date = []
     local_ready_files = []
-    local_ready_files_modDate = []
+    local_ready_files_mod_date = []
 
     for file in os.listdir(pdf_save_path):
         if ".pdf" in file:
-            local_files_modDate.append(file[:-4])
+            local_files_mod_date.append(file[:-4])
             local_files.append(file[:-10])
 
     for file in os.listdir(pdf_final_path):
         if ".pdf" in file:
-            local_ready_files_modDate.append(file[:-4])
+            local_ready_files_mod_date.append(file[:-4])
             local_ready_files.append(file[:-10])
 
     for item in reports:
         if item not in deleted and "__" not in item:
-            if item in local_files_modDate or item in local_ready_files_modDate:
+            if item in local_files_mod_date or item in local_ready_files_mod_date:
                 continue
             elif item[:-6] in local_files:
-                delete_old_pdf(local_files_modDate, item[:-6], False)
+                delete_old_pdf(local_files_mod_date, item[:-6], False)
                 intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path, db)
             elif item[:-6] in local_ready_files:
-                delete_old_pdf(local_ready_files_modDate, item[:-6], True)
+                delete_old_pdf(local_ready_files_mod_date, item[:-6], True)
                 intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path, db)
             else:
                 intoPDF(db.find_report(str(item).split("_")[0]), pdf_save_path, db)
 
     for item in deleted:
-        if item in local_files_modDate:
+        if item in local_files_mod_date:
             os.replace(pdf_save_path + "/" + item + ".pdf", pdf_deleted_path + "/" + item + ".pdf")
-        elif item in local_ready_files_modDate:
+        elif item in local_ready_files_mod_date:
             os.replace(pdf_final_path + "/" + item + ".pdf", pdf_deleted_path + "/" + item + ".pdf")
         elif item[:-6] in local_files:
-            delete_old_pdf(local_files_modDate, item[:-6], False)
+            delete_old_pdf(local_files_mod_date, item[:-6], False)
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path, db)
         elif item[:-6] in local_ready_files:
-            delete_old_pdf(local_ready_files_modDate, item[:-6], True)
+            delete_old_pdf(local_ready_files_mod_date, item[:-6], True)
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path, db)
         else:
             intoPDF(db.find_report(str(item).split("_")[0]), pdf_deleted_path, db)
@@ -109,12 +109,11 @@ def init_gui():
         label = tk.Label(popup, text="Czy na pewno wyczyścić dane?", width=60, height=3)
         label.pack()
         spacing3 = tk.Label(popup, text="", width=60, height=0)
-        # spacing4 = tk.Label(popup, text="", width=60, height=0)
-        B1 = tk.Button(popup, text="Tak", command=lambda: [popup.destroy(), run(msg)])
-        B1.pack()
+        b1 = tk.Button(popup, text="Tak", command=lambda: [popup.destroy(), run(msg)])
+        b1.pack()
         spacing2.pack()
-        B2 = tk.Button(popup, text="Nie", command=popup.destroy)
-        B2.pack()
+        b2 = tk.Button(popup, text="Nie", command=popup.destroy)
+        b2.pack()
         spacing3.pack()
         popup.mainloop()
 
