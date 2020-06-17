@@ -17,4 +17,4 @@ Project authors:
 We provide all necessary files including executable **.exe** file with proper database access credentials for selected fire departments.
 
 ---
-<img src="https://raw.githubusercontent.com/macko99/OSPadmin/master/logo.ico" height="100">
+<img src="https://raw.githubusercontent.com/macko99/OSPadmin/master/OSPadmin_dane/logo.ico" height="100">
